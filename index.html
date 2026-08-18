@@ -24,9 +24,17 @@
         }
         .hole {
             background: radial-gradient(circle, #38220f 35%, #1f1308 75%, #0d0803 100%);
-            box-shadow: inset 0 6px 10px rgba(0,0,0,0.85), 0 3px 6px rgba(0,0,0,0.4);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.85), 0 2px 4px rgba(0,0,0,0.4);
             position: relative;
             overflow: hidden;
+            width: 72px;
+            height: 72px;
+        }
+        @media (min-width: 380px) {
+            .hole {
+                width: 80px;
+                height: 80px;
+            }
         }
         .pop-animal {
             transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.1s ease;
@@ -42,112 +50,112 @@
 </head>
 <body class="grass-bg w-screen h-screen flex flex-col justify-between items-center select-none m-0 p-0 overflow-hidden">
 
-    <div id="app" class="w-full h-full max-w-5xl mx-auto flex flex-col justify-between p-2 sm:p-4 relative box-border overflow-hidden">
+    <div id="app" class="w-full h-full max-w-md mx-auto flex flex-col justify-between p-3 relative box-border overflow-hidden">
 
         <!-- ================= MAIN MENU SCREEN ================= -->
-        <div id="screen-menu" class="flex flex-col items-center justify-center h-full space-y-3 sm:space-y-5 z-10 my-auto relative">
+        <div id="screen-menu" class="flex flex-col items-center justify-center h-full space-y-4 z-10 my-auto relative">
             <!-- Fullscreen Toggle Button at Top Right -->
-            <button onclick="toggleFullScreen()" class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-white/20 hover:bg-white/30 active:scale-95 text-white font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl backdrop-blur-md border border-white/40 shadow-lg text-xs sm:text-sm flex items-center space-x-1 transition z-20">
+            <button onclick="toggleFullScreen()" class="absolute top-2 right-2 bg-white/20 hover:bg-white/30 active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/40 shadow-lg text-xs flex items-center space-x-1 transition z-20">
                 <span>⛶</span>
                 <span>Toàn màn hình</span>
             </button>
 
-            <div class="text-center">
-                <h1 class="text-3xl sm:text-6xl font-black text-yellow-300 drop-shadow-[0_4px_4px_rgba(0,0,0,0.6)]">ĐẬP CHUỘT</h1>
-                <p class="text-green-100 font-semibold text-xs sm:text-lg mt-1 drop-shadow">Nông trại vui vẻ - Thư giãn mỗi ngày</p>
+            <div class="text-center pt-6">
+                <h1 class="text-4xl sm:text-5xl font-black text-yellow-300 drop-shadow-[0_4px_4px_rgba(0,0,0,0.6)]">ĐẬP CHUỘT</h1>
+                <p class="text-green-100 font-semibold text-sm mt-1 drop-shadow">Nông trại vui vẻ - Thư giãn mỗi ngày</p>
             </div>
 
             <!-- Mascot Box -->
-            <div class="bg-white/15 backdrop-blur-md p-3 sm:p-5 rounded-3xl border-3 border-white/30 shadow-2xl flex items-center justify-center space-x-3 sm:space-x-4">
-                <span class="text-3xl sm:text-5xl">🐹</span>
-                <span class="text-3xl sm:text-5xl">🐰</span>
-                <span class="text-3xl sm:text-5xl">👨‍🌾</span>
-                <span class="text-3xl sm:text-5xl">🐍</span>
+            <div class="bg-white/15 backdrop-blur-md p-4 rounded-3xl border-3 border-white/30 shadow-2xl flex items-center justify-center space-x-4">
+                <span class="text-4xl">🐹</span>
+                <span class="text-4xl">🐰</span>
+                <span class="text-4xl">👨‍🌾</span>
+                <span class="text-4xl">🐍</span>
             </div>
 
-            <div class="w-full space-y-2 sm:space-y-3 max-w-xs sm:max-w-sm px-4">
-                <button onclick="startGameMode('practice')" class="w-full py-2.5 sm:py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 text-white font-extrabold text-base sm:text-xl rounded-2xl shadow-xl border-b-4 border-indigo-800 transition transform">
+            <div class="w-full space-y-3 max-w-xs px-2">
+                <button onclick="startGameMode('practice')" class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-indigo-800 transition transform">
                     🎯 Chế độ Luyện Tập
                 </button>
-                <button onclick="startGameMode('challenge')" class="w-full py-2.5 sm:py-3.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-95 text-white font-extrabold text-base sm:text-xl rounded-2xl shadow-xl border-b-4 border-orange-800 transition transform">
+                <button onclick="startGameMode('challenge')" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-orange-800 transition transform">
                     🔥 Chế độ Thử Thách
                 </button>
             </div>
 
-            <div class="text-[11px] sm:text-sm text-green-100 opacity-90 text-center px-4">
+            <div class="text-xs text-green-100 opacity-90 text-center px-4">
                 Đập con vật xuất hiện, tránh bác nông dân. Tối đa 3 lần vi phạm!
             </div>
         </div>
 
         <!-- ================= PRACTICE LEVEL SELECTOR SCREEN ================= -->
-        <div id="screen-practice-select" class="hidden flex flex-col items-center justify-center h-full space-y-2 sm:space-y-4 z-10 my-auto py-1">
-            <h2 class="text-xl sm:text-3xl font-extrabold text-yellow-300 drop-shadow">Chọn Cấp Độ Luyện Tập</h2>
-            <p class="text-[11px] sm:text-sm text-green-100">Chọn từ Level 1 đến 20 để bắt đầu tập luyện</p>
+        <div id="screen-practice-select" class="hidden flex flex-col items-center justify-center h-full space-y-3 z-10 my-auto py-2">
+            <h2 class="text-2xl font-extrabold text-yellow-300 drop-shadow">Chọn Cấp Độ Luyện Tập</h2>
+            <p class="text-xs text-green-100">Chọn từ Level 1 đến 20 để bắt đầu tập luyện</p>
             
-            <div id="level-grid" class="grid grid-cols-5 gap-2 w-full max-w-lg max-h-[50vh] overflow-y-auto p-2 sm:p-3 bg-black/25 rounded-2xl backdrop-blur border border-white/20">
+            <div id="level-grid" class="grid grid-cols-4 gap-2.5 w-full max-w-sm max-h-[60vh] overflow-y-auto p-3 bg-black/25 rounded-2xl backdrop-blur border border-white/20">
                 <!-- Javascript will inject level buttons here -->
             </div>
 
-            <button onclick="showScreen('screen-menu')" class="mt-1 px-5 py-2.5 bg-gray-600 hover:bg-gray-700 active:scale-95 text-white font-bold rounded-xl shadow border-b-4 border-gray-800 transition text-xs sm:text-base">
+            <button onclick="showScreen('screen-menu')" class="mt-2 px-5 py-2.5 bg-gray-600 hover:bg-gray-700 active:scale-95 text-white font-bold rounded-xl shadow border-b-4 border-gray-800 transition text-sm">
                 ⬅ Quay về trang chính
             </button>
         </div>
 
         <!-- ================= GAMEPLAY SCREEN ================= -->
-        <div id="screen-game" class="hidden flex flex-col h-full justify-between z-10 py-1 max-h-full">
+        <div id="screen-game" class="hidden flex flex-col h-full justify-between z-10 py-2">
             <!-- Top Header Status Bar -->
-            <div class="bg-black/35 backdrop-blur-md rounded-2xl px-3 py-1.5 sm:p-3 flex justify-between items-center border border-white/25 shadow-xl flex-shrink-0">
+            <div class="bg-black/35 backdrop-blur-md rounded-2xl p-2.5 flex justify-between items-center border border-white/25 shadow-xl flex-shrink-0">
                 <div class="flex items-center space-x-2">
-                    <span id="label-mode" class="text-[10px] sm:text-xs uppercase font-extrabold bg-yellow-400 text-black px-2 py-0.5 rounded-lg">Thử thách</span>
-                    <span id="label-level" class="text-sm sm:text-lg font-black text-yellow-300">Lv.1</span>
+                    <span id="label-mode" class="text-xs uppercase font-extrabold bg-yellow-400 text-black px-2 py-0.5 rounded-lg">Thử thách</span>
+                    <span id="label-level" class="text-base font-black text-yellow-300">Lv.1</span>
                 </div>
                 
                 <!-- Timer -->
-                <div class="flex items-center space-x-1 bg-red-600/90 px-2.5 py-0.5 sm:py-1 rounded-xl border border-red-400 shadow-inner">
-                    <span class="text-xs sm:text-sm">⏳</span>
-                    <span id="game-timer" class="text-sm sm:text-lg font-bold text-white">20s</span>
+                <div class="flex items-center space-x-1 bg-red-600/90 px-3 py-1 rounded-xl border border-red-400 shadow-inner">
+                    <span class="text-sm">⏳</span>
+                    <span id="game-timer" class="text-base font-bold text-white">20s</span>
                 </div>
 
                 <!-- Violations -->
-                <div class="flex items-center space-x-1.5 bg-black/40 px-2.5 py-0.5 sm:py-1 rounded-xl border border-white/10">
-                    <span class="text-[11px] sm:text-xs font-bold text-red-200">Vi phạm:</span>
-                    <span id="game-misses" class="font-black text-red-400 text-sm sm:text-lg">0</span><span class="text-red-300 text-[11px] sm:text-xs">/3</span>
+                <div class="flex items-center space-x-1 bg-black/40 px-2.5 py-1 rounded-xl border border-white/10">
+                    <span class="text-xs font-bold text-red-200">Vi phạm:</span>
+                    <span id="game-misses" class="font-black text-red-400 text-base">0</span><span class="text-red-300 text-xs">/3</span>
                 </div>
             </div>
 
-            <!-- Grid of Holes (Responsive layout adapts to portrait/landscape with flex-shrink) -->
-            <div class="grid grid-cols-3 gap-2 sm:gap-4 my-auto w-full max-w-lg mx-auto p-2 sm:p-4 bg-emerald-950/40 backdrop-blur-sm rounded-3xl border-3 border-emerald-600/50 shadow-2xl items-center justify-items-center flex-shrink" id="farm-grid">
-                <!-- 9 Holes generated via JS -->
+            <!-- Grid of 12 Holes (3 columns x 4 rows) -->
+            <div class="grid grid-cols-3 gap-2.5 my-auto w-full max-w-sm mx-auto p-3 bg-emerald-950/40 backdrop-blur-sm rounded-3xl border-3 border-emerald-600/50 shadow-2xl items-center justify-items-center flex-shrink-0" id="farm-grid">
+                <!-- 12 Holes generated via JS -->
             </div>
 
             <!-- In-game Bottom Control Bar -->
             <div class="flex justify-between items-center px-1 py-1 flex-shrink-0">
-                <button onclick="backToMenuFromGame()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold rounded-xl text-[11px] sm:text-xs shadow border-b-4 border-red-800 transition">
+                <button onclick="backToMenuFromGame()" class="px-3 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-red-800 transition">
                     🏠 Trang chính
                 </button>
-                <button id="btn-change-level" onclick="openPracticeLevelSelector()" class="hidden px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-[11px] sm:text-xs shadow border-b-4 border-indigo-800 transition">
+                <button id="btn-change-level" onclick="openPracticeLevelSelector()" class="hidden px-3 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-indigo-800 transition">
                     🔄 Đổi Level
                 </button>
-                <div class="text-[11px] sm:text-xs text-green-100 font-medium italic" id="target-score-hint">Dưới 3 lần vi phạm để qua bàn</div>
+                <div class="text-xs text-green-100 font-medium italic" id="target-score-hint">Dưới 3 vi phạm để qua bàn</div>
             </div>
         </div>
 
         <!-- ================= GAME OVER / FAIL MODAL SCREEN ================= -->
         <div id="screen-gameover" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4 z-30">
-            <div class="bg-gradient-to-b from-emerald-800 to-emerald-950 p-6 sm:p-10 rounded-3xl border-4 border-yellow-400 shadow-2xl text-center w-full max-w-md space-y-4 animate-scale-up">
-                <h3 id="go-title" class="text-2xl sm:text-4xl font-black text-yellow-300 drop-shadow-lg">THẤT BẠI!</h3>
-                <p id="go-message" class="text-xs sm:text-lg text-gray-100 font-medium leading-relaxed">Bạn đã phạm lỗi quá 3 lần.</p>
+            <div class="bg-gradient-to-b from-emerald-800 to-emerald-950 p-8 rounded-3xl border-4 border-yellow-400 shadow-2xl text-center w-full max-w-sm space-y-4 animate-scale-up">
+                <h3 id="go-title" class="text-3xl font-black text-yellow-300 drop-shadow-lg">THẤT BẠI!</h3>
+                <p id="go-message" class="text-sm text-gray-100 font-medium leading-relaxed">Bạn đã phạm lỗi quá 3 lần.</p>
                 
                 <div id="go-stats-box" class="bg-black/40 p-4 rounded-2xl space-y-2 border border-white/15">
-                    <div class="text-xs sm:text-base text-gray-200">Cấp độ hiện tại: <span id="go-level" class="font-bold text-yellow-300">1</span></div>
-                    <div class="text-xs sm:text-base text-gray-200">Tổng số lỗi vi phạm: <span id="go-misses" class="font-bold text-red-400">0</span></div>
+                    <div class="text-sm text-gray-200">Cấp độ hiện tại: <span id="go-level" class="font-bold text-yellow-300">1</span></div>
+                    <div class="text-sm text-gray-200">Tổng số lỗi vi phạm: <span id="go-misses" class="font-bold text-red-400">0</span></div>
                 </div>
 
                 <div id="go-buttons" class="space-y-3 pt-1">
-                    <button onclick="restartCurrentLevel()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 active:scale-95 text-white font-extrabold text-base sm:text-xl rounded-2xl shadow-xl border-b-4 border-green-800 transition">
+                    <button onclick="restartCurrentLevel()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-green-800 transition">
                         🔄 Chơi lại
                     </button>
-                    <button onclick="showScreen('screen-menu')" class="w-full py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 active:scale-95 text-white font-extrabold text-base sm:text-xl rounded-2xl shadow-xl border-b-4 border-gray-900 transition">
+                    <button onclick="showScreen('screen-menu')" class="w-full py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-gray-900 transition">
                         🏠 Về trang chính
                     </button>
                 </div>
@@ -156,14 +164,13 @@
 
         <!-- ================= LEVEL UP BANNER SCREEN ================= -->
         <div id="screen-levelup" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4 z-30">
-            <div class="bg-gradient-to-b from-amber-600 to-yellow-800 p-8 sm:p-12 rounded-3xl border-4 border-yellow-300 shadow-2xl text-center w-full max-w-lg space-y-4 animate-scale-up">
-                <h3 id="lu-title" class="text-2xl sm:text-4xl font-black text-yellow-100 drop-shadow-lg">CHÚC MỪNG</h3>
-                <p id="lu-message" class="text-base sm:text-2xl text-white font-bold leading-relaxed">Tiếp theo level 2</p>
+            <div class="bg-gradient-to-b from-amber-600 to-yellow-800 p-8 rounded-3xl border-4 border-yellow-300 shadow-2xl text-center w-full max-w-sm space-y-4 animate-scale-up">
+                <p id="lu-message" class="text-xl sm:text-2xl text-white font-black leading-relaxed">Chúc mừng, Tiếp theo level 2</p>
             </div>
         </div>
 
         <!-- Message floating toast -->
-        <div id="toast-msg" class="absolute top-12 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-3 py-1.5 rounded-full font-bold shadow-2xl opacity-0 transition-opacity pointer-events-none z-40 text-xs">
+        <div id="toast-msg" class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-3.5 py-1.5 rounded-full font-bold shadow-2xl opacity-0 transition-opacity pointer-events-none z-40 text-xs">
             Thông báo
         </div>
 
@@ -240,19 +247,19 @@
             maxMissesAllowed: 3
         };
 
-        const totalHoles = 9;
+        const totalHoles = 12;
 
         function buildHolesGrid() {
             const grid = document.getElementById('farm-grid');
             grid.innerHTML = '';
             for (let i = 0; i < totalHoles; i++) {
                 const holeDiv = document.createElement('div');
-                holeDiv.className = 'hole w-14 h-14 sm:w-22 sm:h-22 md:w-24 md:h-24 rounded-full flex items-center justify-center cursor-pointer relative';
+                holeDiv.className = 'hole rounded-full flex items-center justify-center cursor-pointer relative';
                 holeDiv.dataset.index = i;
                 
                 const entityDiv = document.createElement('div');
                 entityDiv.id = `entity-${i}`;
-                entityDiv.className = 'absolute inset-0 flex items-center justify-center text-3xl sm:text-5xl md:text-6xl pop-animal opacity-0 pointer-events-none';
+                entityDiv.className = 'absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl pop-animal opacity-0 pointer-events-none';
                 
                 holeDiv.appendChild(entityDiv);
                 
@@ -305,7 +312,7 @@
             container.innerHTML = '';
             for (let lvl = 1; lvl <= 20; lvl++) {
                 const btn = document.createElement('button');
-                btn.className = 'py-2.5 bg-emerald-700/80 hover:bg-emerald-600 active:scale-95 text-white font-extrabold text-sm sm:text-base rounded-xl shadow border border-emerald-500 transition';
+                btn.className = 'py-3 bg-emerald-700/80 hover:bg-emerald-600 active:scale-95 text-white font-extrabold text-sm rounded-xl shadow border border-emerald-500 transition';
                 btn.innerText = `Lv. ${lvl}`;
                 btn.onclick = () => {
                     gameState.level = lvl;
@@ -356,7 +363,7 @@
                 }
             }, 1000);
 
-            const spawnSpeed = Math.max(450, 1400 - (lvl * 45));
+            const spawnSpeed = Math.max(400, 1300 - (lvl * 45));
             gameState.spawnInterval = setInterval(() => {
                 spawnRandomEntity();
             }, spawnSpeed);
@@ -401,7 +408,7 @@
             entityDiv.classList.add('opacity-100', 'scale-100');
             entityDiv.style.pointerEvents = 'auto';
 
-            const exposureDuration = Math.max(600, 1500 - (gameState.level * 35));
+            const exposureDuration = Math.max(500, 1400 - (gameState.level * 35));
 
             const hideTimer = setTimeout(() => {
                 const currentHoleData = gameState.activeHoles[randomHoleIdx];
