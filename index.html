@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Đập chuột - Game giải trí vui nhộn</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js for Web Audio Sound Effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Google Fonts Be Vietnam Pro for perfect Vietnamese support -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            background-color: #15803d;
+        }
+        .grass-bg {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #14532d 100%);
+        }
+        .hole {
+            background: radial-gradient(circle, #38220f 35%, #1f1308 75%, #0d0803 100%);
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.85), 0 2px 4px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: visible;
+            width: 72px;
+            height: 72px;
+        }
+        @media (min-height: 700px) {
+            .hole {
+                width: 80px;
+                height: 80px;
+            }
+        }
+        .pop-animal {
+            transition: transform 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.1s ease;
+        }
+        @keyframes scaleUp {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale-up {
+            animation: scaleUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        /* Particle burst animation */
+        @keyframes particleBurst {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleBurst 0.4s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="grass-bg w-screen h-screen flex flex-col justify-between items-center select-none m-0 p-0 overflow-hidden">
+
+    <div id="app" class="w-full h-full max-w-md mx-auto flex flex-col justify-between p-3 relative box-border overflow-hidden">
+
+        <!-- ================= MAIN MENU SCREEN ================= -->
+        <div id="screen-menu" class="flex flex-col items-center justify-center h-full space-y-4 z-10 my-auto relative">
+            <!-- Fullscreen Toggle Button at Top Right -->
+            <button onclick="triggerVibration(40); toggleFullScreen();" class="absolute top-2 right-2 bg-white/20 hover:bg-white/30 active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/40 shadow-lg text-xs flex items-center space-x-1 transition z-20">
+                <span>⛶</span>
+                <span>Toàn màn hình</span>
+            </button>
+
+            <div class="text-center pt-6">
+                <h1 class="text-4xl sm:text-5xl font-black text-yellow-300 drop-shadow-[0_4px_4px_rgba(0,0,0,0.6)]">ĐẬP CHUỘT</h1>
+                <p class="text-green-100 font-semibold text-sm mt-1 drop-shadow">Nông trại vui vẻ - Thư giãn mỗi ngày</p>
+            </div>
+
+            <!-- Mascot Box -->
+            <div class="bg-white/15 backdrop-blur-md p-4 rounded-3xl border-3 border-white/30 shadow-2xl flex items-center justify-center space-x-4">
+                <span class="text-4xl">🐹</span>
+                <span class="text-4xl">🐰</span>
+                <span class="text-4xl">👨‍🌾</span>
+                <span class="text-4xl">🐍</span>
+            </div>
+
+            <div class="w-full space-y-3 max-w-xs px-2">
+                <button onclick="triggerVibration(50); startGameMode('practice');" class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-indigo-800 transition transform">
+                    🎯 Chế độ Luyện Tập
+                </button>
+                <button onclick="triggerVibration(50); startGameMode('challenge');" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-orange-800 transition transform">
+                    🔥 Chế độ Thử Thách
+                </button>
+            </div>
+
+            <div class="text-xs text-green-100 opacity-90 text-center px-4">
+                Đập con vật xuất hiện, tránh bác nông dân. Tối đa 3 lần vi phạm!
+            </div>
+        </div>
+
+        <!-- ================= PRACTICE LEVEL SELECTOR SCREEN ================= -->
+        <div id="screen-practice-select" class="hidden flex flex-col items-center justify-center h-full space-y-3 z-10 my-auto py-2">
+            <h2 class="text-2xl font-extrabold text-yellow-300 drop-shadow">Chọn Cấp Độ Luyện Tập</h2>
+            <p class="text-xs text-green-100">Chọn từ Level 1 đến 20 để bắt đầu tập luyện</p>
+            
+            <div id="level-grid" class="grid grid-cols-4 gap-2.5 w-full max-w-sm max-h-[60vh] overflow-y-auto p-3 bg-black/25 rounded-2xl backdrop-blur border border-white/20">
+                <!-- Javascript will inject level buttons here -->
+            </div>
+
+            <button onclick="triggerVibration(40); showScreen('screen-menu');" class="mt-2 px-5 py-2.5 bg-gray-600 hover:bg-gray-700 active:scale-95 text-white font-bold rounded-xl shadow border-b-4 border-gray-800 transition text-sm">
+                ⬅ Quay về trang chính
+            </button>
+        </div>
+
+        <!-- ================= GAMEPLAY SCREEN ================= -->
+        <div id="screen-game" class="hidden flex flex-col h-full justify-between z-10 py-1">
+            <!-- Top Header Status Bar -->
+            <div class="bg-black/35 backdrop-blur-md rounded-2xl p-2.5 flex justify-between items-center border border-white/25 shadow-xl flex-shrink-0">
+                <div class="flex items-center space-x-2">
+                    <span id="label-mode" class="text-xs uppercase font-extrabold bg-yellow-400 text-black px-2 py-0.5 rounded-lg">Thử thách</span>
+                    <span id="label-level" class="text-base font-black text-yellow-300">Lv.1</span>
+                </div>
+                
+                <!-- Timer -->
+                <div class="flex items-center space-x-1 bg-red-600/90 px-3 py-1 rounded-xl border border-red-400 shadow-inner">
+                    <span class="text-sm">⏳</span>
+                    <span id="game-timer" class="text-base font-bold text-white">20s</span>
+                </div>
+
+                <!-- Violations -->
+                <div class="flex items-center space-x-1 bg-black/40 px-2.5 py-1 rounded-xl border border-white/10">
+                    <span class="text-xs font-bold text-red-200">Vi phạm:</span>
+                    <span id="game-misses" class="font-black text-red-400 text-base">0</span><span class="text-red-300 text-xs">/3</span>
+                </div>
+            </div>
+
+            <!-- Grid of 12 Holes (3 columns x 4 rows) -->
+            <div class="grid grid-cols-3 gap-2 my-auto w-full max-w-sm mx-auto p-2.5 bg-emerald-950/40 backdrop-blur-sm rounded-3xl border-3 border-emerald-600/50 shadow-2xl items-center justify-items-center flex-shrink-0" id="farm-grid">
+                <!-- 12 Holes generated via JS -->
+            </div>
+
+            <!-- In-game Bottom Control Bar -->
+            <div class="flex justify-between items-center px-1 py-1 flex-shrink-0">
+                <button onclick="triggerVibration(40); backToMenuFromGame();" class="px-3 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-red-800 transition">
+                    🏠 Trang chính
+                </button>
+                <button id="btn-change-level" onclick="triggerVibration(40); openPracticeLevelSelector();" class="hidden px-3 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-indigo-800 transition">
+                    🔄 Đổi Level
+                </button>
+                <div class="text-xs text-green-100 font-medium italic" id="target-score-hint">Dưới 3 vi phạm để qua bàn</div>
+            </div>
+        </div>
+
+        <!-- ================= GAME OVER / RESULT MODAL SCREEN ================= -->
+        <div id="screen-gameover" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4 z-30">
+            <div class="bg-gradient-to-b from-emerald-800 to-emerald-950 p-8 rounded-3xl border-4 border-yellow-400 shadow-2xl text-center w-full max-w-sm space-y-4 animate-scale-up">
+                <h3 id="go-title" class="text-3xl font-black text-yellow-300 drop-shadow-lg">THẤT BẠI!</h3>
+                <p id="go-message" class="text-sm text-gray-100 font-medium leading-relaxed">Bạn đã phạm lỗi quá 3 lần.</p>
+                
+                <div id="go-stats-box" class="bg-black/40 p-4 rounded-2xl space-y-2 border border-white/15">
+                    <div class="text-sm text-gray-200">Cấp độ hiện tại: <span id="go-level" class="font-bold text-yellow-300">1</span></div>
+                    <div class="text-sm text-gray-200">Tổng số lỗi vi phạm: <span id="go-misses" class="font-bold text-red-400">0</span></div>
+                </div>
+
+                <div id="go-buttons" class="space-y-3 pt-1">
+                    <!-- Dynamic buttons injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= LEVEL UP BANNER SCREEN (CHALLENGE MODE ONLY) ================= -->
+        <div id="screen-levelup" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4 z-30">
+            <div class="bg-gradient-to-b from-amber-600 to-yellow-800 p-8 rounded-3xl border-4 border-yellow-300 shadow-2xl text-center w-full max-w-sm space-y-4 animate-scale-up">
+                <p id="lu-message" class="text-2xl sm:text-3xl text-white font-black leading-relaxed">Chúc mừng, Tiếp theo level 2</p>
+            </div>
+        </div>
+
+        <!-- Message floating toast -->
+        <div id="toast-msg" class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-3.5 py-1.5 rounded-full font-bold shadow-2xl opacity-0 transition-opacity pointer-events-none z-40 text-xs">
+            Thông báo
+        </div>
+
+    </div>
+
+    <script>
+        // --- VIBRATION FEEDBACK FUNCTION ---
+        function triggerVibration(duration = 40) {
+            if ("vibrate" in navigator) {
+                try {
+                    navigator.vibrate(duration);
+                } catch (e) {
+                    console.log("Vibration not supported or blocked", e);
+                }
+            }
+        }
+
+        // --- PARTICLE BURST EFFECT ---
+        function createParticleBurst(holeElement) {
+            const rect = holeElement.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const colors = ['#fde047', '#f97316', '#22c55e', '#38bdf8', '#ec4899', '#ffffff'];
+
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.backgroundColor = color;
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 40 + Math.random() * 50;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+
+                holeElement.appendChild(particle);
+                setTimeout(() => {
+                    particle.remove();
+                }, 400);
+            }
+        }
+
+        // --- SOUND SETUP WITH TONE.JS ---
+        let audioInitialized = false;
+        let synth, popSynth, penaltySynth;
+
+        function initAudio() {
+            if (audioInitialized) return;
+            try {
+                Tone.start();
+                synth = new Tone.Synth({
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.005, decay: 0.1, sustain: 0, release: 0.1 }
+                }).toDestination();
+
+                popSynth = new Tone.MonoSynth({
+                    oscillator: { type: 'sine' },
+                    envelope: { attack: 0.01, decay: 0.15, sustain: 0, release: 0.1 },
+                    filterEnvelope: { attack: 0.001, decay: 0.1, baseFrequency: 300, octaves: 2 }
+                }).toDestination();
+
+                penaltySynth = new Tone.Synth({
+                    oscillator: { type: 'sawtooth' },
+                    envelope: { attack: 0.01, decay: 0.3, sustain: 0, release: 0.1 }
+                }).toDestination();
+
+                audioInitialized = true;
+            } catch (e) {
+                console.log("Audio init skipped", e);
+            }
+        }
+
+        function playHitSound() {
+            initAudio();
+            try { popSynth.triggerAttackRelease("C6", "16n"); } catch(e){}
+        }
+
+        function playPenaltySound() {
+            initAudio();
+            try { penaltySynth.triggerAttackRelease("G2", "8n"); } catch(e){}
+        }
+
+        function playLevelUpSound() {
+            initAudio();
+            try {
+                const now = Tone.now();
+                synth.triggerAttackRelease("C5", "8n", now);
+                synth.triggerAttackRelease("E5", "8n", now + 0.1);
+                synth.triggerAttackRelease("G5", "8n", now + 0.2);
+            } catch(e){}
+        }
+
+        const animalsData = [
+            { id: 'mouse', name: 'Chuột', icon: '🐹', type: 'animal' },
+            { id: 'rabbit', name: 'Thỏ', icon: '🐰', type: 'animal' },
+            { id: 'snake', name: 'Rắn', icon: '🐍', type: 'animal' },
+            { id: 'cockroach', name: 'Gián', icon: '🪳', type: 'animal' },
+            { id: 'worm', name: 'Giun', icon: '🐛', type: 'animal' },
+            { id: 'farmer', name: 'Bác Nông Dân', icon: '👨‍🌾', type: 'farmer', isDanger: true }
+        ];
+
+        let gameState = {
+            mode: 'challenge',
+            level: 1,
+            misses: 0,
+            timeLeft: 20,
+            timerInterval: null,
+            spawnInterval: null,
+            activeHoles: {},
+            maxMissesAllowed: 3
+        };
+
+        const totalHoles = 12;
+
+        function buildHolesGrid() {
+            const grid = document.getElementById('farm-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < totalHoles; i++) {
+                const holeDiv = document.createElement('div');
+                holeDiv.className = 'hole rounded-full flex items-center justify-center cursor-pointer relative';
+                holeDiv.dataset.index = i;
+                
+                const entityDiv = document.createElement('div');
+                entityDiv.id = `entity-${i}`;
+                entityDiv.className = 'absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl pop-animal opacity-0 pointer-events-none z-10';
+                
+                holeDiv.appendChild(entityDiv);
+                
+                holeDiv.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    initAudio();
+                    handleHoleTap(i, holeDiv);
+                });
+
+                grid.appendChild(holeDiv);
+            }
+        }
+
+        function showScreen(screenId) {
+            document.getElementById('screen-menu').classList.add('hidden');
+            document.getElementById('screen-practice-select').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-gameover').classList.add('hidden');
+            document.getElementById('screen-levelup').classList.add('hidden');
+            
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log("Error attempting to enable fullscreen:", err.message);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function startGameMode(mode) {
+            initAudio();
+            gameState.mode = mode;
+            if (mode === 'practice') {
+                buildPracticeLevelSelector();
+                showScreen('screen-practice-select');
+            } else {
+                gameState.level = 1;
+                startLevel(1);
+            }
+        }
+
+        function buildPracticeLevelSelector() {
+            const container = document.getElementById('level-grid');
+            container.innerHTML = '';
+            for (let lvl = 1; lvl <= 20; lvl++) {
+                const btn = document.createElement('button');
+                btn.className = 'py-3 bg-emerald-700/80 hover:bg-emerald-600 active:scale-95 text-white font-extrabold text-sm rounded-xl shadow border border-emerald-500 transition';
+                btn.innerText = `Lv. ${lvl}`;
+                btn.onclick = () => {
+                    triggerVibration(40);
+                    gameState.level = lvl;
+                    startLevel(lvl);
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        function openPracticeLevelSelector() {
+            stopGameLoops();
+            buildPracticeLevelSelector();
+            showScreen('screen-practice-select');
+        }
+
+        function backToMenuFromGame() {
+            stopGameLoops();
+            showScreen('screen-menu');
+        }
+
+        function startLevel(lvl) {
+            stopGameLoops();
+            gameState.level = lvl;
+            gameState.misses = 0;
+            gameState.timeLeft = 20;
+            gameState.activeHoles = {};
+
+            buildHolesGrid();
+            showScreen('screen-game');
+
+            document.getElementById('label-level').innerText = `Lv.${lvl}`;
+            document.getElementById('game-timer').innerText = `${gameState.timeLeft}s`;
+            document.getElementById('game-misses').innerText = `${gameState.misses}`;
+
+            if (gameState.mode === 'practice') {
+                document.getElementById('label-mode').innerText = 'Luyện tập';
+                document.getElementById('btn-change-level').classList.remove('hidden');
+            } else {
+                document.getElementById('label-mode').innerText = 'Thử thách';
+                document.getElementById('btn-change-level').classList.add('hidden');
+            }
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('game-timer').innerText = `${gameState.timeLeft}s`;
+                if (gameState.timeLeft <= 0) {
+                    finishLevelSuccess();
+                }
+            }, 1000);
+
+            const spawnSpeed = Math.max(400, 1300 - (lvl * 45));
+            gameState.spawnInterval = setInterval(() => {
+                spawnRandomEntity();
+            }, spawnSpeed);
+        }
+
+        function stopGameLoops() {
+            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
+            if (gameState.spawnInterval) clearInterval(gameState.spawnInterval);
+            Object.keys(gameState.activeHoles).forEach(holeIdx => {
+                clearTimeout(gameState.activeHoles[holeIdx].timer);
+            });
+            gameState.activeHoles = {};
+        }
+
+        function spawnRandomEntity() {
+            const emptyHoles = [];
+            for (let i = 0; i < totalHoles; i++) {
+                if (!gameState.activeHoles[i]) emptyHoles.push(i);
+            }
+            if (emptyHoles.length === 0) return;
+
+            const randomHoleIdx = emptyHoles[Math.floor(Math.random() * emptyHoles.length)];
+            
+            let chosenEntity;
+            const farmerChance = Math.min(0.35, 0.1 + (gameState.level * 0.012));
+            if (Math.random() < farmerChance) {
+                chosenEntity = animalsData.find(a => a.id === 'farmer');
+            } else {
+                const animalsOnly = animalsData.filter(a => !a.isDanger);
+                chosenEntity = animalsOnly[Math.floor(Math.random() * animalsOnly.length)];
+            }
+
+            const entityDiv = document.getElementById(`entity-${randomHoleIdx}`);
+            if (!entityDiv) return;
+
+            entityDiv.innerText = chosenEntity.icon;
+            entityDiv.dataset.entityId = chosenEntity.id;
+            entityDiv.dataset.isDanger = chosenEntity.isDanger ? 'true' : 'false';
+            entityDiv.dataset.hit = 'false';
+
+            entityDiv.classList.remove('opacity-0', 'scale-50');
+            entityDiv.classList.add('opacity-100', 'scale-100');
+            entityDiv.style.pointerEvents = 'auto';
+
+            const exposureDuration = Math.max(500, 1400 - (gameState.level * 35));
+
+            const hideTimer = setTimeout(() => {
+                const currentHoleData = gameState.activeHoles[randomHoleIdx];
+                if (currentHoleData && !currentHoleData.hit) {
+                    if (!chosenEntity.isDanger) {
+                        triggerVibration(60);
+                        registerMiss();
+                    }
+                }
+                hideEntity(randomHoleIdx);
+            }, exposureDuration);
+
+            gameState.activeHoles[randomHoleIdx] = {
+                timer: hideTimer,
+                entity: chosenEntity,
+                hit: false
+            };
+        }
+
+        function hideEntity(holeIdx) {
+            const entityDiv = document.getElementById(`entity-${holeIdx}`);
+            if (entityDiv) {
+                entityDiv.classList.remove('opacity-100', 'scale-100');
+                entityDiv.classList.add('opacity-0', 'scale-50');
+                entityDiv.style.pointerEvents = 'none';
+            }
+            if (gameState.activeHoles[holeIdx]) {
+                clearTimeout(gameState.activeHoles[holeIdx].timer);
+                delete gameState.activeHoles[holeIdx];
+            }
+        }
+
+        function handleHoleTap(holeIdx, holeElement) {
+            const holeData = gameState.activeHoles[holeIdx];
+
+            if (holeData && !holeData.hit) {
+                holeData.hit = true;
+                if (holeData.entity.isDanger) {
+                    triggerVibration(70);
+                    playPenaltySound();
+                    registerMiss();
+                    showToast("Đánh nhầm nông dân! (-1 vi phạm)");
+                } else {
+                    triggerVibration(45);
+                    playHitSound();
+                    createParticleBurst(holeElement);
+                    showToast("Đập trúng!");
+                }
+                hideEntity(holeIdx);
+            } else {
+                triggerVibration(60);
+                playPenaltySound();
+                registerMiss();
+                showToast("Đánh hụt! (-1 vi phạm)");
+            }
+        }
+
+        function registerMiss() {
+            gameState.misses++;
+            document.getElementById('game-misses').innerText = `${gameState.misses}`;
+            if (gameState.misses >= gameState.maxMissesAllowed) {
+                triggerGameOver();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-msg');
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 800);
+        }
+
+        function finishLevelSuccess() {
+            stopGameLoops();
+            triggerVibration([50, 50, 80]);
+
+            if (gameState.mode === 'practice') {
+                playLevelUpSound();
+                triggerPracticeResultModal(true);
+            } else {
+                playLevelUpSound();
+                const nextLvl = gameState.level + 1;
+                document.getElementById('lu-message').innerText = `Chúc mừng, Tiếp theo level ${nextLvl}`;
+                document.getElementById('screen-levelup').classList.remove('hidden');
+
+                setTimeout(() => {
+                    document.getElementById('screen-levelup').classList.add('hidden');
+                    gameState.level = nextLvl;
+                    startLevel(gameState.level);
+                }, 1800);
+            }
+        }
+
+        function triggerGameOver() {
+            stopGameLoops();
+            triggerVibration([80, 80, 120]);
+            playPenaltySound();
+
+            if (gameState.mode === 'practice') {
+                triggerPracticeResultModal(false);
+            } else {
+                document.getElementById('go-title').innerText = "THẤT BẠI!";
+                document.getElementById('go-message').innerText = "Bạn đã phạm lỗi quá 3 lần.";
+                document.getElementById('go-level').innerText = gameState.level;
+                document.getElementById('go-misses').innerText = gameState.misses;
+
+                const buttonsDiv = document.getElementById('go-buttons');
+                buttonsDiv.innerHTML = `
+                    <button onclick="triggerVibration(50); restartCurrentLevel();" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-green-800 transition">
+                        🔄 Chơi lại
+                    </button>
+                    <button onclick="triggerVibration(40); showScreen('screen-menu');" class="w-full py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-gray-900 transition">
+                        🏠 Về trang chính
+                    </button>
+                `;
+                document.getElementById('screen-gameover').classList.remove('hidden');
+            }
+        }
+
+        function triggerPracticeResultModal(isWin) {
+            document.getElementById('go-title').innerText = isWin ? "HOÀN THÀNH LEVEL!" : "THẤT BẠI!";
+            document.getElementById('go-message').innerText = isWin ? `Bạn đã vượt qua Level ${gameState.level} thành công!` : "Bạn đã vi phạm quá 3 lần.";
+            document.getElementById('go-level').innerText = gameState.level;
+            document.getElementById('go-misses').innerText = gameState.misses;
+
+            const buttonsDiv = document.getElementById('go-buttons');
+            buttonsDiv.innerHTML = `
+                <button onclick="triggerVibration(50); restartCurrentLevel();" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 active:scale-95 text-white font-extrabold text-base rounded-xl shadow-lg border-b-4 border-green-800 transition">
+                    🔄 Chơi lại (Level ${gameState.level})
+                </button>
+                <button onclick="triggerVibration(40); openPracticeLevelSelector();" class="w-full py-2.5 bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-600 hover:to-blue-700 active:scale-95 text-white font-extrabold text-base rounded-xl shadow-lg border-b-4 border-indigo-800 transition">
+                    🎯 Chọn level khác
+                </button>
+                <button onclick="triggerVibration(40); showScreen('screen-menu');" class="w-full py-2.5 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 active:scale-95 text-white font-extrabold text-base rounded-xl shadow-lg border-b-4 border-gray-900 transition">
+                    🏠 Về trang chính
+                </button>
+            `;
+            document.getElementById('screen-gameover').classList.remove('hidden');
+        }
+
+        function restartCurrentLevel() {
+            document.getElementById('screen-gameover').classList.add('hidden');
+            startLevel(gameState.level);
+        }
+
+        window.onload = function() {
+            buildHolesGrid();
+        };
+    </script>
+</body>
+</html>
