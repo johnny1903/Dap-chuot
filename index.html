@@ -26,7 +26,7 @@
             background: radial-gradient(circle, #38220f 35%, #1f1308 75%, #0d0803 100%);
             box-shadow: inset 0 4px 8px rgba(0,0,0,0.85), 0 2px 4px rgba(0,0,0,0.4);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             width: 72px;
             height: 72px;
         }
@@ -45,6 +45,19 @@
         }
         .animate-scale-up {
             animation: scaleUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        /* Particle burst animation */
+        @keyframes particleBurst {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleBurst 0.4s ease-out forwards;
         }
     </style>
 </head>
@@ -188,6 +201,36 @@
             }
         }
 
+        // --- PARTICLE BURST EFFECT ---
+        function createParticleBurst(holeElement) {
+            const rect = holeElement.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const colors = ['#fde047', '#f97316', '#22c55e', '#38bdf8', '#ec4899', '#ffffff'];
+
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.backgroundColor = color;
+                particle.style.left = `${centerX}px`;
+                particle.style.top = `${centerY}px`;
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 40 + Math.random() * 50;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+
+                holeElement.appendChild(particle);
+                setTimeout(() => {
+                    particle.remove();
+                }, 400);
+            }
+        }
+
         // --- SOUND SETUP WITH TONE.JS ---
         let audioInitialized = false;
         let synth, popSynth, penaltySynth;
@@ -270,14 +313,14 @@
                 
                 const entityDiv = document.createElement('div');
                 entityDiv.id = `entity-${i}`;
-                entityDiv.className = 'absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl pop-animal opacity-0 pointer-events-none';
+                entityDiv.className = 'absolute inset-0 flex items-center justify-center text-3xl sm:text-4xl pop-animal opacity-0 pointer-events-none z-10';
                 
                 holeDiv.appendChild(entityDiv);
                 
                 holeDiv.addEventListener('pointerdown', (e) => {
                     e.preventDefault();
                     initAudio();
-                    handleHoleTap(i);
+                    handleHoleTap(i, holeDiv);
                 });
 
                 grid.appendChild(holeDiv);
@@ -453,7 +496,7 @@
             }
         }
 
-        function handleHoleTap(holeIdx) {
+        function handleHoleTap(holeIdx, holeElement) {
             const holeData = gameState.activeHoles[holeIdx];
 
             if (holeData && !holeData.hit) {
@@ -464,8 +507,9 @@
                     registerMiss();
                     showToast("Đánh nhầm nông dân! (-1 vi phạm)");
                 } else {
-                    triggerVibration(30);
+                    triggerVibration(45);
                     playHitSound();
+                    createParticleBurst(holeElement);
                     showToast("Đập trúng!");
                 }
                 hideEntity(holeIdx);
