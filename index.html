@@ -30,7 +30,7 @@
             width: 72px;
             height: 72px;
         }
-        @media (min-width: 380px) {
+        @media (min-height: 700px) {
             .hole {
                 width: 80px;
                 height: 80px;
@@ -55,7 +55,7 @@
         <!-- ================= MAIN MENU SCREEN ================= -->
         <div id="screen-menu" class="flex flex-col items-center justify-center h-full space-y-4 z-10 my-auto relative">
             <!-- Fullscreen Toggle Button at Top Right -->
-            <button onclick="toggleFullScreen()" class="absolute top-2 right-2 bg-white/20 hover:bg-white/30 active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/40 shadow-lg text-xs flex items-center space-x-1 transition z-20">
+            <button onclick="triggerVibration(40); toggleFullScreen();" class="absolute top-2 right-2 bg-white/20 hover:bg-white/30 active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl backdrop-blur-md border border-white/40 shadow-lg text-xs flex items-center space-x-1 transition z-20">
                 <span>⛶</span>
                 <span>Toàn màn hình</span>
             </button>
@@ -74,10 +74,10 @@
             </div>
 
             <div class="w-full space-y-3 max-w-xs px-2">
-                <button onclick="startGameMode('practice')" class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-indigo-800 transition transform">
+                <button onclick="triggerVibration(50); startGameMode('practice');" class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-indigo-800 transition transform">
                     🎯 Chế độ Luyện Tập
                 </button>
-                <button onclick="startGameMode('challenge')" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-orange-800 transition transform">
+                <button onclick="triggerVibration(50); startGameMode('challenge');" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-orange-800 transition transform">
                     🔥 Chế độ Thử Thách
                 </button>
             </div>
@@ -96,13 +96,13 @@
                 <!-- Javascript will inject level buttons here -->
             </div>
 
-            <button onclick="showScreen('screen-menu')" class="mt-2 px-5 py-2.5 bg-gray-600 hover:bg-gray-700 active:scale-95 text-white font-bold rounded-xl shadow border-b-4 border-gray-800 transition text-sm">
+            <button onclick="triggerVibration(40); showScreen('screen-menu');" class="mt-2 px-5 py-2.5 bg-gray-600 hover:bg-gray-700 active:scale-95 text-white font-bold rounded-xl shadow border-b-4 border-gray-800 transition text-sm">
                 ⬅ Quay về trang chính
             </button>
         </div>
 
         <!-- ================= GAMEPLAY SCREEN ================= -->
-        <div id="screen-game" class="hidden flex flex-col h-full justify-between z-10 py-2">
+        <div id="screen-game" class="hidden flex flex-col h-full justify-between z-10 py-1">
             <!-- Top Header Status Bar -->
             <div class="bg-black/35 backdrop-blur-md rounded-2xl p-2.5 flex justify-between items-center border border-white/25 shadow-xl flex-shrink-0">
                 <div class="flex items-center space-x-2">
@@ -124,16 +124,16 @@
             </div>
 
             <!-- Grid of 12 Holes (3 columns x 4 rows) -->
-            <div class="grid grid-cols-3 gap-2.5 my-auto w-full max-w-sm mx-auto p-3 bg-emerald-950/40 backdrop-blur-sm rounded-3xl border-3 border-emerald-600/50 shadow-2xl items-center justify-items-center flex-shrink-0" id="farm-grid">
+            <div class="grid grid-cols-3 gap-2 my-auto w-full max-w-sm mx-auto p-2.5 bg-emerald-950/40 backdrop-blur-sm rounded-3xl border-3 border-emerald-600/50 shadow-2xl items-center justify-items-center flex-shrink-0" id="farm-grid">
                 <!-- 12 Holes generated via JS -->
             </div>
 
             <!-- In-game Bottom Control Bar -->
             <div class="flex justify-between items-center px-1 py-1 flex-shrink-0">
-                <button onclick="backToMenuFromGame()" class="px-3 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-red-800 transition">
+                <button onclick="triggerVibration(40); backToMenuFromGame();" class="px-3 py-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-red-800 transition">
                     🏠 Trang chính
                 </button>
-                <button id="btn-change-level" onclick="openPracticeLevelSelector()" class="hidden px-3 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-indigo-800 transition">
+                <button id="btn-change-level" onclick="triggerVibration(40); openPracticeLevelSelector();" class="hidden px-3 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow border-b-4 border-indigo-800 transition">
                     🔄 Đổi Level
                 </button>
                 <div class="text-xs text-green-100 font-medium italic" id="target-score-hint">Dưới 3 vi phạm để qua bàn</div>
@@ -152,10 +152,10 @@
                 </div>
 
                 <div id="go-buttons" class="space-y-3 pt-1">
-                    <button onclick="restartCurrentLevel()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-green-800 transition">
+                    <button onclick="triggerVibration(50); restartCurrentLevel();" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-green-800 transition">
                         🔄 Chơi lại
                     </button>
-                    <button onclick="showScreen('screen-menu')" class="w-full py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-gray-900 transition">
+                    <button onclick="triggerVibration(40); showScreen('screen-menu');" class="w-full py-3 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-xl border-b-4 border-gray-900 transition">
                         🏠 Về trang chính
                     </button>
                 </div>
@@ -165,7 +165,7 @@
         <!-- ================= LEVEL UP BANNER SCREEN ================= -->
         <div id="screen-levelup" class="hidden absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4 z-30">
             <div class="bg-gradient-to-b from-amber-600 to-yellow-800 p-8 rounded-3xl border-4 border-yellow-300 shadow-2xl text-center w-full max-w-sm space-y-4 animate-scale-up">
-                <p id="lu-message" class="text-xl sm:text-2xl text-white font-black leading-relaxed">Chúc mừng, Tiếp theo level 2</p>
+                <p id="lu-message" class="text-2xl sm:text-3xl text-white font-black leading-relaxed">Chúc mừng, Tiếp theo level 2</p>
             </div>
         </div>
 
@@ -177,6 +177,17 @@
     </div>
 
     <script>
+        // --- VIBRATION FEEDBACK FUNCTION ---
+        function triggerVibration(duration = 40) {
+            if ("vibrate" in navigator) {
+                try {
+                    navigator.vibrate(duration);
+                } catch (e) {
+                    console.log("Vibration not supported or blocked", e);
+                }
+            }
+        }
+
         // --- SOUND SETUP WITH TONE.JS ---
         let audioInitialized = false;
         let synth, popSynth, penaltySynth;
@@ -315,6 +326,7 @@
                 btn.className = 'py-3 bg-emerald-700/80 hover:bg-emerald-600 active:scale-95 text-white font-extrabold text-sm rounded-xl shadow border border-emerald-500 transition';
                 btn.innerText = `Lv. ${lvl}`;
                 btn.onclick = () => {
+                    triggerVibration(40);
                     gameState.level = lvl;
                     startLevel(lvl);
                 };
@@ -414,6 +426,7 @@
                 const currentHoleData = gameState.activeHoles[randomHoleIdx];
                 if (currentHoleData && !currentHoleData.hit) {
                     if (!chosenEntity.isDanger) {
+                        triggerVibration(60);
                         registerMiss();
                     }
                 }
@@ -446,15 +459,18 @@
             if (holeData && !holeData.hit) {
                 holeData.hit = true;
                 if (holeData.entity.isDanger) {
+                    triggerVibration(70);
                     playPenaltySound();
                     registerMiss();
                     showToast("Đánh nhầm nông dân! (-1 vi phạm)");
                 } else {
+                    triggerVibration(30);
                     playHitSound();
                     showToast("Đập trúng!");
                 }
                 hideEntity(holeIdx);
             } else {
+                triggerVibration(60);
                 playPenaltySound();
                 registerMiss();
                 showToast("Đánh hụt! (-1 vi phạm)");
@@ -480,6 +496,7 @@
 
         function finishLevelSuccess() {
             stopGameLoops();
+            triggerVibration([50, 50, 80]);
             playLevelUpSound();
 
             const nextLvl = gameState.level + 1;
@@ -500,6 +517,7 @@
 
         function triggerGameOver() {
             stopGameLoops();
+            triggerVibration([80, 80, 120]);
             playPenaltySound();
 
             document.getElementById('go-level').innerText = gameState.level;
